@@ -14,9 +14,14 @@ class TeacherController extends Controller
         $this->apiUrl = env('API_BASE_URL') . '/api/teachers';
     }
 
+    private function http()
+    {
+        return Http::withToken(session('token'));
+    }
+
     public function index()
     {
-        $teachers = Http::get($this->apiUrl)->json();
+        $teachers = $this->http()->get($this->apiUrl)->json();
         return view('teachers.index', compact('teachers'));
     }
 
@@ -27,25 +32,25 @@ class TeacherController extends Controller
 
     public function store(Request $request)
     {
-        Http::post($this->apiUrl, $request->all());
+        $this->http()->post($this->apiUrl, $request->all());
         return redirect()->route('teachers.index');
     }
 
     public function edit(string $id)
     {
-        $teacher = Http::get($this->apiUrl . '/' . $id)->json();
+        $teacher = $this->http()->get($this->apiUrl . '/' . $id)->json();
         return view('teachers.edit', compact('teacher'));
     }
 
     public function update(Request $request, string $id)
     {
-        Http::put($this->apiUrl . '/' . $id, $request->all());
+        $this->http()->put($this->apiUrl . '/' . $id, $request->all());
         return redirect()->route('teachers.index');
     }
 
     public function destroy(string $id)
     {
-        Http::delete($this->apiUrl . '/' . $id);
+        $this->http()->delete($this->apiUrl . '/' . $id);
         return redirect()->route('teachers.index');
     }
 }

@@ -10,10 +10,24 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
             <a class="navbar-brand" href="/">School Management</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="{{ route('teachers.index') }}">Teachers</a>
-                <a class="nav-link" href="{{ route('students.index') }}">Students</a>
-                <a class="nav-link" href="{{ route('subjects.index') }}">Subjects</a>
+            <div class="navbar-nav me-auto">
+                @if(session('token'))
+                    <a class="nav-link" href="{{ route('teachers.index') }}">Teachers</a>
+                    <a class="nav-link" href="{{ route('students.index') }}">Students</a>
+                    <a class="nav-link" href="{{ route('subjects.index') }}">Subjects</a>
+                @endif
+            </div>
+            <div class="navbar-nav ms-auto">
+                @if(session('token'))
+                    <span class="nav-link text-light">{{ session('user')['name'] }}</span>
+                    <form action="{{ route('logout') }}" method="POST" style="display:inline">
+                        @csrf
+                        <button class="btn btn-outline-light btn-sm mt-1">Sortir</button>
+                    </form>
+                @else
+                    <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    <a class="nav-link" href="{{ route('register') }}">Registre</a>
+                @endif
             </div>
         </div>
     </nav>

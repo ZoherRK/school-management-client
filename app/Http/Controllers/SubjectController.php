@@ -16,40 +16,45 @@ class SubjectController extends Controller
         $this->teachersUrl = env('API_BASE_URL') . '/api/teachers';
     }
 
+    private function http()
+    {
+        return Http::withToken(session('token'));
+    }
+
     public function index()
     {
-        $subjects = Http::get($this->apiUrl)->json();
+        $subjects = $this->http()->get($this->apiUrl)->json();
         return view('subjects.index', compact('subjects'));
     }
 
     public function create()
     {
-        $teachers = Http::get($this->teachersUrl)->json();
+        $teachers = $this->http()->get($this->teachersUrl)->json();
         return view('subjects.create', compact('teachers'));
     }
 
     public function store(Request $request)
     {
-        Http::post($this->apiUrl, $request->all());
+        $this->http()->post($this->apiUrl, $request->all());
         return redirect()->route('subjects.index');
     }
 
     public function edit(string $id)
     {
-        $subject = Http::get($this->apiUrl . '/' . $id)->json();
-        $teachers = Http::get($this->teachersUrl)->json();
+        $subject = $this->http()->get($this->apiUrl . '/' . $id)->json();
+        $teachers = $this->http()->get($this->teachersUrl)->json();
         return view('subjects.edit', compact('subject', 'teachers'));
     }
 
     public function update(Request $request, string $id)
     {
-        Http::put($this->apiUrl . '/' . $id, $request->all());
+        $this->http()->put($this->apiUrl . '/' . $id, $request->all());
         return redirect()->route('subjects.index');
     }
 
     public function destroy(string $id)
     {
-        Http::delete($this->apiUrl . '/' . $id);
+        $this->http()->delete($this->apiUrl . '/' . $id);
         return redirect()->route('subjects.index');
     }
 }
