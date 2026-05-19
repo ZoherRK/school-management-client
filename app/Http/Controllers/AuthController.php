@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -62,5 +63,35 @@ class AuthController extends Controller
         Http::withToken(session('token'))->post($this->apiUrl . '/logout');
         $request->session()->forget(['token', 'user']);
         return redirect()->route('login');
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->user();
+
+        $response = Http::post($this->apiUrl . '/register', [
+            'name'     => $googleUser->getName(),
+            'email'    => $googleUser->getEmail(),
+            'password' => bcrypt($googleUser->getId()),
+        ]);
+
+        if (!$response->successful()) {
+            $response = Http::post($this->apiUrl . '/login-google', [
+                'email' => $googleUser->getEmail(),
+            ]);
+        }
+
+        if ($response->successful()) {
+            session(['token' => $response->json()['token']]);
+            session(['user'  => $response->json()['user']]);
+            return redirect()->route('teachers.index');
+        }
+
+        return redirect()->route('login')->withErrors(['email' => 'Error amb Google.']);
     }
 }

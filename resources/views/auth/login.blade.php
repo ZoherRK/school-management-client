@@ -21,6 +21,12 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
+
+        <hr>
+        <a href="{{ route('google.login') }}" class="btn btn-danger w-100">
+            Iniciar sessió amb Google
+        </a>
+
         <p class="mt-3 text-center">No tens compte? <a href="{{ route('register') }}">Registra't</a></p>
     </div>
 </div>
